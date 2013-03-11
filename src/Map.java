@@ -141,6 +141,7 @@ public class Map {
                     map[i][j] = 1;
                 else map[i][j] = 0;
             }
+
         }
     }
 
