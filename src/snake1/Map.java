@@ -1,35 +1,37 @@
+package snake1;
+
 import java.awt.*;
 
 public class Map {
-    int sizeX;         // amount of fields in X and Y direction
-    int sizeY;
-    int map[][];
-    int level;
-    String MapName;
+    private int sizeX;         // amount of fields in X and Y direction
+    private int sizeY;
+    private int map[][];
+    private int level;
+    private String MapName;
 
     public static final int allignX = 40;               // For graphics only
     public static final int allignY = 55;
 
-    boolean gamover = false;
-    boolean nextlevel = false;
+    private boolean is_next_level = false;
+    public boolean isNextLevel() {
+        return is_next_level;
+    }
 
-    Font LevFont = new Font("Arial", Font.BOLD, 38);
+    private Font LevFont = new Font("Arial", Font.BOLD, 38);
 
 
-    /* CODES ON MAP
+    /* CODES ON MAP */
 
-    0 - SPACE
-    1 - WALL
-    2 - SNAKE
-    3 - APPLE
-    21 - SNAKE HEAD
-
-    */
+    public static final int SPACE      = 0;
+    public static final int WALL       = 1;
+    public static final int SNAKE      = 2;
+    public static final int APPLE      = 3;
+    public static final int SNAKE_HEAD = 21;
 
 
     //default empty map with borders
 
-    Map(int x, int y) {
+    public Map(int x, int y) {
         sizeX = x;
         sizeY = y;
         map = new int[x][y];
@@ -42,7 +44,7 @@ public class Map {
         }
     }
 
-    Map(int x, int y, int level) {
+    public Map(int x, int y, int level) {
         sizeX = x;
         sizeY = y;
         map = new int[x][y];
@@ -58,7 +60,7 @@ public class Map {
 
     }
 
-    void draw(Graphics2D g) {
+    public void draw(Graphics2D g) {
         DrawLevelSign(g);
 
         for (int i = 0; i < sizeX; i++) {
@@ -86,50 +88,16 @@ public class Map {
         }
     }
 
-    private void DrawLevelSign(Graphics2D g){
+    private void DrawLevelSign(Graphics2D g) {
         g.setColor(Color.BLACK);
         g.setFont(LevFont);
         g.drawString(MapName, 1020, 80);
     }
 
-    void tracksnake(Snake s) {
-
-        map[s.x][s.y] = 21;
-
-        for (int i = 1; i < s.getTail(); i++) {                           //was 0 without head
-            map[s.snakeposX.get(i)][s.snakeposY.get(i)] = 2;
-        }
-        map[s.traceX][s.traceY] = 0;
-
-    }
-
-    void trackapple(Apple a) {
-        map[a.x][a.y] = 3;
-    }
-
-    void create_walls(int n) {
+    public void createWalls(int n) {
         for (int i = 0; i < n; i++) {
-            Wall W = new Wall(sizeX, sizeY, this);
+            new Wall(sizeX, sizeY, this);
         }
-
-    }
-
-    void event_check(Snake s, Apple a) {
-        if (map[s.x][s.y] == 1)
-            s.destroy();
-
-        if (s.x == a.x && s.y == a.y)
-            s.manger(a);
-
-        if (s.getTail() > 1) {
-            for (int i = 1; i < s.getTail(); i++) {
-                if (s.x == s.snakeposX.get(i) && s.y == s.snakeposY.get(i))
-                    s.destroy();
-            }
-        }
-
-        if (s.isdestroyed)
-            gamover = true;
 
     }
 
@@ -150,7 +118,8 @@ public class Map {
         for (int i = 0; i < sizeX; i++) {
             for (int j = 0; j < sizeY; j++) {
                 map[i][j] = 0;
-            }}
+            }
+        }
 
         for (int i = sizeX / 4; i < 3 * sizeX / 4; i++) {
             map[i][sizeY / 2 + 1] = 1;
@@ -159,6 +128,18 @@ public class Map {
             map[i][sizeY / 2 + 4] = 1;
         }
 
+    }
+
+    public boolean notZero(int x, int y) {
+        return map[x][y] != 0;
+    }
+
+    public void setPoint(int x, int y, int map_code) {
+        map[x][y] = map_code;
+    }
+
+    public int getPoint(int x, int y) {
+        return map[x][y];
     }
 }
 
