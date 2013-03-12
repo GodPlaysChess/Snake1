@@ -25,18 +25,35 @@ public class RandomlyLocatedObject {
 
     protected void incX() {
         x++;
+        if (x == map.getSizeX())
+            x = 0;
     }
 
     protected void decX() {
         x--;
+        if (x == -1)
+            x = map.getSizeX() - 1;
     }
 
     protected void incY() {
         y++;
+        if (y == map.getSizeY())
+            y = 0;
     }
 
     protected void decY() {
         y--;
+        if (y == -1)
+            y = map.getSizeY() - 1;
+
+    }
+
+    protected void setY(int val) {
+        y = val;
+    }
+
+    protected void setX(int val) {
+        y = val;
     }
 }
 

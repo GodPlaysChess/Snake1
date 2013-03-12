@@ -61,13 +61,14 @@ public class Snake extends RandomlyLocatedObject {
 
     }
 
-    public void tracksnake() {
-        map.setPoint(getX(), getY(), Map.SNAKE_HEAD);
+    public void tracksnake(Map m) {
+
+        map.setPoint(getX(), getY(), m.SNAKE_HEAD);
 
         for (int i = 1; i < snakeposX.size(); i++) {                           //was 0 without head
-            map.setPoint(snakeposX.get(i), snakeposY.get(i), Map.SNAKE);
+            m.setPoint(snakeposX.get(i), snakeposY.get(i), Map.SNAKE);
         }
-        map.setPoint(traceX, traceY, 0);
+        m.setPoint(traceX, traceY, 0);
 
     }
 
@@ -118,4 +119,7 @@ public class Snake extends RandomlyLocatedObject {
             }
         }
     }
+
+
 }
+

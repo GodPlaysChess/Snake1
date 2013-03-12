@@ -6,16 +6,17 @@ public class Map {
     private int sizeX;         // amount of fields in X and Y direction
     private int sizeY;
     private int map[][];
-    private int level;
+
     private String MapName;
 
     public static final int allignX = 40;               // For graphics only
     public static final int allignY = 55;
 
-    private boolean is_next_level = false;
-    public boolean isNextLevel() {
+/*    private boolean is_next_level = false;
+
+ public boolean isNextLevel() {
         return is_next_level;
-    }
+    }*/
 
     private Font LevFont = new Font("Arial", Font.BOLD, 38);
 
@@ -31,19 +32,6 @@ public class Map {
 
     //default empty map with borders
 
-    public Map(int x, int y) {
-        sizeX = x;
-        sizeY = y;
-        map = new int[x][y];
-        for (int i = 0; i < x; i++) {
-            for (int j = 0; j < y; j++) {
-                if (i == 0 || j == 0 || i == (x - 1) || j == (y - 1))
-                    map[i][j] = 1;
-                else map[i][j] = 0;
-            }
-        }
-    }
-
     public Map(int x, int y, int level) {
         sizeX = x;
         sizeY = y;
@@ -56,9 +44,21 @@ public class Map {
             case 2:
                 level2(x, y);
                 break;
+            case 3:
+                level3(x,y);
+                break;
+            case 4:
+                level4(x,y);
+                break;
+            case 5:
+                level5(x,y);
+                break;
         }
 
     }
+
+
+
 
     public void draw(Graphics2D g) {
         DrawLevelSign(g);
@@ -111,6 +111,7 @@ public class Map {
             }
 
         }
+        map[0][0]=1;
     }
 
     private void level2(int sizeX, int sizeY) {
@@ -130,6 +131,33 @@ public class Map {
 
     }
 
+    private void level3(int sizeX, int sizeY) {
+
+        for (int i = 0; i < sizeX; i++) {
+            for (int j = 0; j < sizeY; j++) {
+                map[i][j] = 0;
+            }
+        }
+
+        for (int i = sizeX / 4; i < 3 * sizeX / 4; i++) {
+            map[i][sizeY / 8 ] = 1;
+            map[i][7*sizeY / 8] = 1;
+        }
+        for (int i = sizeY / 8; i < 3 * sizeY / 8; i++) {
+            map[sizeX / 4 ][i] = 1;
+            map[3*sizeX / 4][i] = 1;
+        }
+        for (int i = 5*sizeY / 8; i <= 7 * sizeY / 8; i++) {
+            map[sizeX / 4 ][i] = 1;
+            map[3*sizeX / 4][i] = 1;
+        }
+    }
+    private void level4(int sizeX, int sizeY) {
+    }
+
+    private void level5(int sizeX, int sizeY) {
+    }
+
     public boolean notZero(int x, int y) {
         return map[x][y] != 0;
     }
@@ -141,6 +169,16 @@ public class Map {
     public int getPoint(int x, int y) {
         return map[x][y];
     }
+
+
+    public int getSizeX(){
+        return sizeX;
+    }
+
+    public int getSizeY(){
+        return sizeY;
+    }
+
 }
 
 
