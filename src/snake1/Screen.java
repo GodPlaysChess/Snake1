@@ -12,25 +12,24 @@ public class Screen extends JFrame implements KeyListener, ActionListener, Mouse
     private Map map = null;
     private Snake snake = null;
     private Apple apple = null;
+
     private boolean is_running = true;
     private boolean is_gameover = false;
     private boolean next_level_accepted = false;
-    private boolean go_further = false;
 
 
-    private int speed = 40;                             //level hardness mostly
+    private int speed = 30;                             //level hardness mostly
     private Score score = new Score();
 
     // private int level = 1;
 
-    public Screen(String s, int level) {         //Graphics
+    public Screen(String s, int level, int GameType) {         //Graphics
         super(s);
         setSize(1224, 708);
         setLocation(300, 120);
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         createBufferStrategy(2);
-
 
         this.setFocusable(true);
         this.addKeyListener(this);
@@ -40,23 +39,38 @@ public class Screen extends JFrame implements KeyListener, ActionListener, Mouse
         map = new Map(length, width, level);
         snake = new Snake(length, width, map);
         apple = new Apple(length, width, map);
+
+
+
     }
 
     public void gameloop() {
         while (is_running) {
-            snake.tracksnake(map);                                   //tracking the objects (writing the positions to the map Array
 
+
+            snake.tracksnake(map);                                   //tracking the objects (writing the positions to the map Array
             snake.move();
 
-            //check for events : Collision / Manger
+            apple.decTime();
+            apple.CheckTimer(map);
 
             snake.checkSelfDesctruction();
             snake.maybeEat(apple);
 
-            if (snake.isDestroyed())
-                is_gameover = true;
+            if (snake.isDestroyed()) {
+                Main.lives--;
+                if (Main.lives <= 0)
+                    is_gameover = true;
+                else
+                    ressurect();
+            }
 
-            if (apple.isEaten()) {
+            if (apple.Is_dead()) {
+                apple = new Apple(length, width, map);
+            }
+
+
+                if (apple.isEaten()) {
                 apple = new Apple(length, width, map);
                 score.incValue();
                 if (speed < 100)
@@ -72,9 +86,7 @@ public class Screen extends JFrame implements KeyListener, ActionListener, Mouse
             if (score.NextLevelCondition(Main.level))
                 GoToNextLevel();
 
-
             renderScreen();
-
 
             try {
                 Thread.sleep(2000l / speed);
@@ -103,6 +115,8 @@ public class Screen extends JFrame implements KeyListener, ActionListener, Mouse
             case KeyEvent.VK_R:
                 is_running = false;
                 Main.restart_request = true;
+                Main.lives = 3;
+                Main.level = 1;
                 break;
             case KeyEvent.VK_SPACE:
                 if (next_level_accepted) {
@@ -130,6 +144,8 @@ public class Screen extends JFrame implements KeyListener, ActionListener, Mouse
             g = (Graphics2D) bf.getDrawGraphics();
             map.draw(g);
             score.DrawScore(g);
+            apple.ShowTime(g);
+
 
             if (is_gameover) {
                 score.ShowGamoverScreen(g);
@@ -139,10 +155,6 @@ public class Screen extends JFrame implements KeyListener, ActionListener, Mouse
             if (next_level_accepted)
                 score.ShowWinScreen(g);
 
-
-          /*  if (score.NextLevelCondition(Main.level)) {
-                score.ShowWinScreen(g);
-            } */
 
         } finally {
             // It is best to dispose() a Graphics object when done with it.
@@ -165,6 +177,8 @@ public class Screen extends JFrame implements KeyListener, ActionListener, Mouse
         if (e.getX() >= 975 && e.getX() < 1187 && e.getY() > 570 && e.getY() < 620) {
             is_running = false;
             Main.restart_request = true;
+            Main.lives = 3;
+            Main.level = 1;
         }
     }
 
@@ -185,14 +199,13 @@ public class Screen extends JFrame implements KeyListener, ActionListener, Mouse
         Main.level++;
         next_level_accepted = true;
 
+    }
 
-      /* while (!go_further) {
-            if (go_further)
-                Main.next_level_request = true;
-                is_running = false;
-            Main.restart_request = true;
-        }
-        */
+    private void ressurect() {
+        snake.stop();
+        snake.MakeTomb(map);
+        snake = new Snake(length, width, map);
+        speed = 30;
     }
 
 

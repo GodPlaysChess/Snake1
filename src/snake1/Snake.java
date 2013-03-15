@@ -31,33 +31,35 @@ public class Snake extends RandomlyLocatedObject {
     }
 
     public void move() {
-        if (direction - last_direction != 2 && direction - last_direction != -2) {           //Prevents the snake to make pi-turns
-            _move(direction);
-        } else _move(last_direction);
+        if (!stopped) {
+            if (direction - last_direction != 2 && direction - last_direction != -2) {           //Prevents the snake to make pi-turns
+                _move(direction);
+            } else _move(last_direction);
+        }
     }
 
     private void _move(int direction) {
-        if (!stopped) {
-            switch (direction) {                                           //Moving the head
-                case KeyEvent.VK_UP:
-                    decY();
-                    break;
-                case KeyEvent.VK_DOWN:
-                    incY();
-                    break;
-                case KeyEvent.VK_LEFT:
-                    decX();
-                    break;
-                case KeyEvent.VK_RIGHT:
-                    incX();
-                    break;
-            }
-            last_direction = direction;
 
-            if (direction != KeyEvent.VK_0) {                                                              //Shifting the whole snake
-                update_pos();
-            }
+        switch (direction) {                                           //Moving the head
+            case KeyEvent.VK_UP:
+                decY();
+                break;
+            case KeyEvent.VK_DOWN:
+                incY();
+                break;
+            case KeyEvent.VK_LEFT:
+                decX();
+                break;
+            case KeyEvent.VK_RIGHT:
+                incX();
+                break;
         }
+        last_direction = direction;
+
+        if (direction != KeyEvent.VK_0) {                                                              //Shifting the whole snake
+            update_pos();
+        }
+
 
     }
 
@@ -118,6 +120,16 @@ public class Snake extends RandomlyLocatedObject {
                     destroy();
             }
         }
+    }
+
+    public void MakeTomb(Map m) {
+        m.setPoint(getX(), getY(), Map.WALL);
+        if (snakeposX.size() > 1) {
+            for (int i = 1; i < snakeposX.size(); i++) {
+                m.setPoint(snakeposX.get(i), snakeposY.get(i), Map.SPACE);
+            }
+        }
+        m.setPoint(traceX, traceY, 0);
     }
 
 
