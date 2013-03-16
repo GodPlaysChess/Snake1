@@ -13,7 +13,7 @@ public class GameSettings {
         switch (gametype) {
             case Main.CAMPAIGN: {
                 timer_off = true;
-                speed = 50;
+                speed = 40;
                 speedlimit = 80;
                 wallrate = 10;
                 this.gametype = Main.CAMPAIGN;
@@ -23,7 +23,7 @@ public class GameSettings {
                 Main.level = 0;
                 Main.lives = 0;
                 timer_off = true;
-                speed = 40;
+                speed = 30;
                 speedlimit = 80;
                 wallrate = 5;
                 this.gametype = Main.SURVIVAL;
@@ -33,7 +33,7 @@ public class GameSettings {
                 Main.level = 0;
                 Main.lives = 0;
                 timer_off = false;
-                speed = 50;
+                speed = 40;
                 speedlimit = 80;
                 wallrate = 5;
                 this.gametype = Main.DUEL;

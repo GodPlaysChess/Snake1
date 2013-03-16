@@ -73,7 +73,7 @@ public class Menu extends JFrame {
         label.setHorizontalAlignment(JLabel.CENTER);
 
         JLabel author = new JLabel();
-        author.setText("Developed by G.Parakhonsiy");
+        author.setText("Developed by G.Parakhonskiy");
         author.setFont(new Font("Arial", Font.ITALIC, 10));
         author.setBounds(250, 50, 940, 600);
         author.setOpaque(true);

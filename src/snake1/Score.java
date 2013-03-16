@@ -134,7 +134,7 @@ public class Score {
             case 1:
                 return (getValue() > 25);
             case 2:
-                return (getValue() > 30);
+                return (getValue() > 25);
             case 3:
                 return (getValue() > 25);
             case 4:
