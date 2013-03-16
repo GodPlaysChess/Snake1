@@ -38,19 +38,31 @@ public class Snake extends RandomlyLocatedObject {
         }
     }
 
+    public void move2() {
+        if (!stopped) {
+            if (direction - last_direction != 4 && direction - last_direction != -4 && direction - last_direction != 3 && direction - last_direction != -3) {           //Prevents the snake to make pi-turns
+                _move(direction);
+            } else _move(last_direction);
+        }
+    }
+
     private void _move(int direction) {
 
         switch (direction) {                                           //Moving the head
             case KeyEvent.VK_UP:
+            case KeyEvent.VK_W:
                 decY();
                 break;
             case KeyEvent.VK_DOWN:
+            case KeyEvent.VK_S:
                 incY();
                 break;
             case KeyEvent.VK_LEFT:
+            case KeyEvent.VK_A:
                 decX();
                 break;
             case KeyEvent.VK_RIGHT:
+            case KeyEvent.VK_D:
                 incX();
                 break;
         }
@@ -69,6 +81,17 @@ public class Snake extends RandomlyLocatedObject {
 
         for (int i = 1; i < snakeposX.size(); i++) {                           //was 0 without head
             m.setPoint(snakeposX.get(i), snakeposY.get(i), Map.SNAKE);
+        }
+        m.setPoint(traceX, traceY, 0);
+
+    }
+
+    public void tracksnake2(Map m) {
+
+        map.setPoint(getX(), getY(), m.SNAKE2_HEAD);
+
+        for (int i = 1; i < snakeposX.size(); i++) {                           //was 0 without head
+            m.setPoint(snakeposX.get(i), snakeposY.get(i), Map.SNAKE2);
         }
         m.setPoint(traceX, traceY, 0);
 
@@ -110,16 +133,8 @@ public class Snake extends RandomlyLocatedObject {
     }
 
     public void checkSelfDesctruction() {
-        if (map.getPoint(getX(), getY()) == Map.WALL) {
+        if (direction != KeyEvent.VK_0 && DestructionConditions() && stopped == false)
             destroy();
-        }
-
-        if (snakeposX.size() > 1) {
-            for (int i = 1; i < snakeposX.size(); i++) {
-                if (getX() == snakeposX.get(i) && getY() == snakeposY.get(i))
-                    destroy();
-            }
-        }
     }
 
     public void MakeTomb(Map m) {
@@ -130,6 +145,21 @@ public class Snake extends RandomlyLocatedObject {
             }
         }
         m.setPoint(traceX, traceY, 0);
+    }
+
+    private boolean DestructionConditions() {
+        if (map.getPoint(getX(), getY()) == Map.WALL)
+            return true;
+        if (map.getPoint(getX(), getY()) == Map.SNAKE)
+            return true;
+        if (map.getPoint(getX(), getY()) == Map.SNAKE2)
+            return true;
+        if (map.getPoint(getX(), getY()) == Map.SNAKE2_HEAD)
+            return true;
+        if (map.getPoint(getX(), getY()) == Map.SNAKE_HEAD)
+            return true;
+
+        else return false;
     }
 
 

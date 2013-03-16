@@ -43,8 +43,8 @@ public class Apple extends RandomlyLocatedObject {
     public void ShowTime(Graphics2D g) {
         g.setColor(Color.RED);
         g.setFont(new Font("Serif", Font.BOLD, 40));
-        g.clearRect(940, 208, 190, 50);
-        g.drawString(" " + getTime(), 960, 250);
+        g.clearRect(940, 218, 190, 50);
+        g.drawString(" " + getTime(), 960, 260);
     }
 
     public void CheckTimer(Map m) {

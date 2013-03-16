@@ -4,6 +4,9 @@ import java.awt.*;
 
 public class Score {
     private int value = 0;
+    public boolean p1wins = false;
+    public boolean p2wins = false;
+
     private int rectsize = 20;
     public final static int left_edge = 995;
     public final static int bottom_edge = 610;
@@ -61,14 +64,38 @@ public class Score {
 
     public void ShowGamoverScreen(Graphics2D g) {
         g.setColor(Color.BLACK);
-        g.drawString("YOUR GAME IS OVER, SUCKER", 195, 310);
+        g.drawString("YOUR GAME IS OVER, :(", 195, 310);
+    }
+
+    public void ShowDuelScreen(Graphics2D g) {
+        if (p1wins) ShowPlayer1WinScreen(g);
+        if (p2wins) ShowPlayer2WinScreen(g);
+    }
+
+    private void ShowPlayer1WinScreen(Graphics2D g) {
+        g.setColor(Color.BLUE);
+        g.drawString("CONGRATULATIONS!!", 195, 310);
+        g.drawString("BLUE SNAKE WINS", 195, 240);
+
+    }
+
+    private void ShowPlayer2WinScreen(Graphics2D g) {
+        g.setColor(Color.MAGENTA);
+        g.drawString("PURPLE SNAKE WINS", 195, 310);
+        g.drawString("CONGRATULATIONS!!", 195, 240);
+
     }
 
     public void ShowWinScreen(Graphics2D g) {
+
+        if (Main.level==6)
+            g.drawString("CONGRATULATIONS!!! YOU HAVE COMPLETED ALL LEVELS!!!", 195, 310);
+        else{
         g.setColor(Color.BLACK);
         g.drawString("CONGRATULATIONS!!! YOU WON!!!", 195, 310);
         g.drawString("BETTER LUCK ON THE NEXT LEVEL!", 190, 350);
         g.drawString("Press SPACE to continue", 195, 610);
+        }
     }
 
     private void DrawHelp(Graphics2D g) {
@@ -87,28 +114,33 @@ public class Score {
 
 
         g.drawString("Use arrows to move", left_edge, 410);
+
+        g.drawString("Or WSAD for player 2", left_edge - 9, 445);
     }
-
-
-
-
 
 
     public int getValue() {
         return value;
     }
 
+    public void setValue() {
+        value = 0;
+
+    }
+
     public boolean NextLevelCondition(int level) {
 
         switch (level) {
             case 1:
-                return (getValue() > 30);
+                return (getValue() > 25);
             case 2:
                 return (getValue() > 30);
             case 3:
-                return (getValue() > 30);
-
-
+                return (getValue() > 25);
+            case 4:
+                return (getValue() > 25);
+            case 5:
+                return (getValue() > 25);
         }
         return false;
     }

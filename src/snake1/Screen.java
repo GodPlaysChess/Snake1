@@ -11,19 +11,17 @@ public class Screen extends JFrame implements KeyListener, ActionListener, Mouse
 
     private Map map = null;
     private Snake snake = null;
+    private Snake snake2 = null;
     private Apple apple = null;
+    private GameSettings game = null;
 
     private boolean is_running = true;
     private boolean is_gameover = false;
     private boolean next_level_accepted = false;
 
-
-    private int speed = 30;                             //level hardness mostly
     private Score score = new Score();
 
-    // private int level = 1;
-
-    public Screen(String s, int level, int GameType) {         //Graphics
+    public Screen(String s, int gametype) {         //Graphics
         super(s);
         setSize(1224, 708);
         setLocation(300, 120);
@@ -36,9 +34,15 @@ public class Screen extends JFrame implements KeyListener, ActionListener, Mouse
         this.addMouseListener(this);
         //interaction with user
 
-        map = new Map(length, width, level);
+        game = new GameSettings(gametype);
+        map = new Map(length, width, Main.level);
+        if (Main.level>2)
+            game.timer_off=false;
         snake = new Snake(length, width, map);
         apple = new Apple(length, width, map);
+
+        if (gametype == Main.DUEL)
+            snake2 = new Snake(length, width, map);
 
 
 
@@ -47,37 +51,66 @@ public class Screen extends JFrame implements KeyListener, ActionListener, Mouse
     public void gameloop() {
         while (is_running) {
 
-
-            snake.tracksnake(map);                                   //tracking the objects (writing the positions to the map Array
+            snake.tracksnake(map);                                  //tracking the objects (writing the positions to the map Array
             snake.move();
 
+            if (snake2 != null) {
+                snake2.tracksnake2(map);
+                snake2.move2();
+            }
+
             apple.decTime();
-            apple.CheckTimer(map);
+
+            if (!game.timer_off)
+                apple.CheckTimer(map);
 
             snake.checkSelfDesctruction();
             snake.maybeEat(apple);
 
-            if (snake.isDestroyed()) {
-                Main.lives--;
-                if (Main.lives <= 0)
-                    is_gameover = true;
-                else
-                    ressurect();
+            if (snake2 != null) {
+                snake2.checkSelfDesctruction();
+                snake2.maybeEat(apple);
             }
+
+            if (game.gametype != Main.DUEL) {
+                if (snake.isDestroyed()) {
+                    Main.lives--;
+                    if (Main.lives <= 0)
+                        is_gameover = true;
+                    else
+                        ressurect();
+                }
+            }
+
+            if (snake2 != null) {
+                if (snake.isDestroyed()) {
+                    score.p2wins = true;
+                    snake.stop();
+                    snake2.stop();
+                    is_gameover=true;
+                }
+                if (snake2.isDestroyed()) {
+                    score.p1wins = true;
+                    snake.stop();
+                    snake2.stop();
+                    is_gameover=true;
+                }
+            }
+
 
             if (apple.Is_dead()) {
                 apple = new Apple(length, width, map);
             }
 
 
-                if (apple.isEaten()) {
+            if (apple.isEaten()) {
                 apple = new Apple(length, width, map);
                 score.incValue();
-                if (speed < 100)
-                    speed++;                       //  <-  making it faster
+                if (game.speed < game.speedlimit)
+                    game.speed++;                       //  <-  making it faster
 
                 if (score.getValue() % 5 == 0)
-                    map.createWalls(10);
+                    map.createWalls(game.wallrate);
             }
 
             if (is_gameover)
@@ -89,7 +122,7 @@ public class Screen extends JFrame implements KeyListener, ActionListener, Mouse
             renderScreen();
 
             try {
-                Thread.sleep(2000l / speed);
+                Thread.sleep((long) (1130 / Math.sqrt(game.speed) - 100));                 //(6.13 / Math.sqrt(speed) - 0.2)  Thread.sleep(2000l / speed);
             } catch (InterruptedException ignored) {
             }
         }
@@ -124,6 +157,13 @@ public class Screen extends JFrame implements KeyListener, ActionListener, Mouse
                     Main.restart_request = true;
                 }
                 break;
+            case KeyEvent.VK_W:
+            case KeyEvent.VK_A:
+            case KeyEvent.VK_S:
+            case KeyEvent.VK_D:
+                if (snake2 != null)
+                    snake2.setDirection(e.getKeyCode());
+                break;
 
         }
     }
@@ -144,17 +184,21 @@ public class Screen extends JFrame implements KeyListener, ActionListener, Mouse
             g = (Graphics2D) bf.getDrawGraphics();
             map.draw(g);
             score.DrawScore(g);
-            apple.ShowTime(g);
+
+            if (!game.timer_off)
+                apple.ShowTime(g);
 
 
-            if (is_gameover) {
+            if (game.gametype != Main.DUEL && is_gameover)
                 score.ShowGamoverScreen(g);
-            }
 
+            if (game.gametype == Main.DUEL && is_gameover)
+                score.ShowDuelScreen(g);
 
-            if (next_level_accepted)
+            if (next_level_accepted) {
+                score.setValue();
                 score.ShowWinScreen(g);
-
+            }
 
         } finally {
             // It is best to dispose() a Graphics object when done with it.
@@ -205,7 +249,7 @@ public class Screen extends JFrame implements KeyListener, ActionListener, Mouse
         snake.stop();
         snake.MakeTomb(map);
         snake = new Snake(length, width, map);
-        speed = 30;
+        game.speed = game.inspeed;
     }
 
 
