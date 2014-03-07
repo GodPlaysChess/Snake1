@@ -1,4 +1,6 @@
-package snake1;
+package snake1.objects;
+
+import snake1.data.Map;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -137,7 +139,7 @@ public class Snake extends RandomlyLocatedObject {
             destroy();
     }
 
-    public void MakeTomb(Map m) {
+    public void makeTomb(Map m) {
         m.setPoint(getX(), getY(), Map.WALL);
         if (snakeposX.size() > 1) {
             for (int i = 1; i < snakeposX.size(); i++) {

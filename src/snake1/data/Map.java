@@ -1,69 +1,59 @@
-package snake1;
+package snake1.data;
+
+import snake1.objects.GameObject;
+import snake1.objects.GameObjectType;
+import snake1.objects.Space;
+import snake1.objects.Wall;
 
 import java.awt.*;
 
 public class Map {
     private int sizeX;         // amount of fields in X and Y direction
     private int sizeY;
-    private int map[][];
+    private GameObject[][] map;
 
-    private String MapName;
+    private String mapName;
 
-    public static final int allignX = 40;               // For graphics only
-    public static final int allignY = 55;
+    public static final int ALIGN_X = 40;               // For graphics only
+    public static final int ALIGN_Y = 55;
 
-    private Font LevFont = new Font("Arial", Font.BOLD, 38);
-
-
-    /* CODES ON MAP */
-
-    public static final int SPACE = 0;
-    public static final int WALL = 1;
-    public static final int SNAKE = 2;
-    public static final int APPLE = 3;
-    public static final int SNAKE_HEAD = 21;
-    public static final int SNAKE2_HEAD = 41;
-    public static final int SNAKE2 = 4;
+    private static final Font LEV_FONT = new Font("Arial", Font.BOLD, 38);
 
     //default empty map with borders
 
     public Map(int x, int y, int level) {
         sizeX = x;
         sizeY = y;
-        map = new int[x][y];
-        MapName = "Level " + level;
+        map = new GameObject[x][y];
+        mapName = "Level " + level;
         switch (level) {
-            case 0:
-                level0(x, y);
-                break;
-
             case 1:
-                level1(x, y);
+                level1();
                 break;
             case 2:
-                level2(x, y);
+                level2();
                 break;
             case 3:
-                level3(x, y);
+                level3();
                 break;
             case 4:
-                level4(x, y);
+                level4();
                 break;
             case 5:
-                level5(x, y);
+                level5();
                 break;
+            default:
+                level0();
         }
-
     }
 
 
     public void draw(Graphics2D g) {
-        DrawLevelSign(g);
-
+        drawLevelSign(g);
         for (int i = 0; i < sizeX; i++) {
             for (int j = 0; j < sizeY; j++) {
-                switch (map[i][j]) {
-                    case 0:
+                map[i][j].draw(g);
+                    /*case 0:
                         g.setColor(Color.WHITE);
                         break;
                     case 1:
@@ -82,41 +72,37 @@ public class Map {
                         g.setColor(Color.MAGENTA);
                         break;
                     case SNAKE2:
-                        g.setColor(Color.ORANGE);
+                        g.setColor(Color.ORANGE);*/
 
-                }
-                g.fillRect(allignX + i * 15, allignY + j * 15, 15, 15);
+
             }
         }
     }
 
-    private void DrawLevelSign(Graphics2D g) {
+    private void drawLevelSign(Graphics2D g) {
         g.setColor(Color.BLACK);
-        g.setFont(LevFont);
-        g.drawString(MapName, 1020, 80);
+        g.setFont(LEV_FONT);
+        g.drawString(mapName, 1020, 80);
     }
 
-    public void createWalls(int n) {
+    private void createWalls(int n) {
         for (int i = 0; i < n; i++) {
-            new Wall(sizeX, sizeY, this);
+            new Wall(sizeX, sizeY);
         }
 
     }
 
-    private void level1(int sizeX, int sizeY) {
-
+    private void level1() {
         for (int i = 0; i < sizeX; i++) {
             for (int j = 0; j < sizeY; j++) {
                 if (i == 0 || j == 0 || i == (sizeX - 1) || j == (sizeY - 1))
-                    map[i][j] = 1;
-                else map[i][j] = 0;
+                    map[i][j] = new Wall(i, j);
+                else map[i][j] = new Space(i, j);
             }
-
         }
-        map[0][0] = 1;
     }
 
-    private void level2(int sizeX, int sizeY) {
+    private void level2() {
 
         for (int i = 0; i < sizeX; i++) {
             for (int j = 0; j < sizeY; j++) {
@@ -133,7 +119,7 @@ public class Map {
 
     }
 
-    private void level3(int sizeX, int sizeY) {
+    private void level3() {
 
         for (int i = 0; i < sizeX; i++) {
             for (int j = 0; j < sizeY; j++) {
@@ -155,7 +141,7 @@ public class Map {
         }
     }
 
-    private void level4(int sizeX, int sizeY) {
+    private void level4() {
         for (int i = 0; i < sizeX; i++) {
             for (int j = 0; j < sizeY; j++) {
                 map[i][j] = 0;
@@ -218,13 +204,12 @@ public class Map {
 
     }
 
-    private void level5(int sizeX, int sizeY) {
+    private void level5() {
         for (int i = 0; i < sizeX; i++) {
             for (int j = 0; j < sizeY; j++) {
                 map[i][j] = 0;
             }
         }
-        ////////////////////////////// Initializing
 
         for (int i = 0; i < sizeX / 2; i++) {
             map[i][10] = 1;
@@ -240,27 +225,24 @@ public class Map {
         }
 
         for (int i = 10; i < 19; i++) {
-            map[sizeX/2][i] = 1;
+            map[sizeX / 2][i] = 1;
         }
 
         for (int i = 0; i < 19; i++) {
-            map[sizeX*3/4][i] = 1;
+            map[sizeX * 3 / 4][i] = 1;
         }
 
         for (int i = 20; i < 33; i++) {
-            map[sizeX*3/8][i] = 1;
+            map[sizeX * 3 / 8][i] = 1;
         }
 
         for (int i = 32; i < 37; i++) {
-            map[sizeX*7/8+1][i] = 1;
-            map[sizeX/2][i] = 1;
+            map[sizeX * 7 / 8 + 1][i] = 1;
+            map[sizeX / 2][i] = 1;
         }
-
-
-
     }
 
-    private void level0(int sizeX, int sizeY) {
+    private void level0() {
         for (int i = 0; i < sizeX; i++) {
             for (int j = 0; j < sizeY; j++) {
                 map[i][j] = 0;
@@ -268,9 +250,6 @@ public class Map {
         }
     }
 
-    public boolean notZero(int x, int y) {
-        return map[x][y] != 0;
-    }
 
     public void setPoint(int x, int y, int map_code) {
         map[x][y] = map_code;
@@ -287,6 +266,15 @@ public class Map {
 
     public int getSizeY() {
         return sizeY;
+    }
+
+    private int[] getRandomEmptyField() {
+        int x, y;
+        do {
+            x = (int) (Math.random() * sizeX);
+            y = (int) (Math.random() * sizeY);
+        } while (map[x][y].getType() != GameObjectType.SPACE);
+        return new int[]{x, y};
     }
 
 

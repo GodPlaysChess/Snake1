@@ -1,66 +1,72 @@
-package snake1;
+package snake1.graphics;
 
-import com.sun.deploy.util.LinkMouseListener;
+import snake1.data.GameSettings;
+import snake1.data.GameType;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.BufferStrategy;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Menu extends JFrame {
-    private Font font = new Font("Arial", Font.BOLD, 138);
+    private static final Font font = new Font("Arial", Font.BOLD, 138);
+    public static final Menu MENU = new Menu();
 
+    public boolean isGameChosen() {
+        return gameChosen;
+    }
 
-    public Menu() {
+    private boolean gameChosen = false;
+
+    private Menu() {
         initUI();
     }
 
     public final void initUI() {
-
         JPanel menu = new JPanel();
         getContentPane().add(menu);
         menu.setLayout(null);
         setTitle("Snake");
 
-        JButton campaign_button = new JButton("Campaign");
-        campaign_button.setBounds(450, 400, 300, 50);
-        campaign_button.addActionListener(new ActionListener() {
+        JButton campaignButton = new JButton("Campaign");
+        campaignButton.setBounds(450, 400, 300, 50);
+        campaignButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Main.game_chose = false;
-                Main.gametype = Main.CAMPAIGN;
                 dispose();
+                GameSettings.SETTINGS.setGame(GameType.CAMPAIGN);
+                gameChosen = true;
             }
         });
 
-        JButton exit_button = new JButton("EXIT");
-        exit_button.setBounds(450, 550, 300, 50);
-        exit_button.addActionListener(new ActionListener() {
+        JButton exitButton = new JButton("EXIT");
+        exitButton.setBounds(450, 550, 300, 50);
+        exitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.exit(0);
             }
         });
 
-        JButton rush_button = new JButton("Duel");
-        rush_button.setBounds(450, 450, 300, 50);
-        rush_button.addActionListener(new ActionListener() {
+        JButton duelButton = new JButton("Duel");
+        duelButton.setBounds(450, 450, 300, 50);
+        duelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Main.game_chose = false;
-                Main.gametype = Main.DUEL;
                 dispose();
+                GameSettings.SETTINGS.setGame(GameType.DUEL);
+                gameChosen = true;
             }
         });
 
-        JButton survival_button = new JButton("Survival");
-        survival_button.setBounds(450, 500, 300, 50);
-        survival_button.addActionListener(new ActionListener() {
+        JButton survivalButton = new JButton("Survival");
+        survivalButton.setBounds(450, 500, 300, 50);
+        survivalButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Main.game_chose = false;
-                Main.gametype = Main.SURVIVAL;
                 dispose();
+                GameSettings.SETTINGS.setGame(GameType.SURVIVAL);
+                gameChosen = true;
             }
         });
 
@@ -80,20 +86,18 @@ public class Menu extends JFrame {
         author.setVerticalAlignment(JLabel.BOTTOM);
         author.setHorizontalAlignment(JLabel.RIGHT);
 
-        menu.add(campaign_button);
-        menu.add(rush_button);
-        menu.add(survival_button);
-        menu.add(exit_button);
+        menu.add(campaignButton);
+        menu.add(duelButton);
+        menu.add(survivalButton);
+        menu.add(exitButton);
         menu.add(label);
         menu.add(author);
 
         setSize(1224, 708);
         setLocationRelativeTo(null);
-        setVisible(true);
+        setVisible(!gameChosen);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-
     }
-
-
 }
+
+

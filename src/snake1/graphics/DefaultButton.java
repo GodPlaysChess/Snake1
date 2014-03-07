@@ -1,4 +1,4 @@
-package snake1;
+package snake1.graphics;
 
 import java.awt.*;
 

@@ -1,4 +1,6 @@
-package snake1;
+package snake1.graphics;
+
+import snake1.general.Main;
 
 import java.awt.*;
 
@@ -16,8 +18,7 @@ public class Score {
     private Font font_explain = new Font("arial", Font.PLAIN, 20);
 
 
-    public void DrawScore(Graphics2D g) {
-
+    public void drawScore(Graphics2D g) {
         g.setFont(font);
         g.setColor(Color.BLACK);
         g.drawString("SCORE", 1020, 150);
@@ -25,9 +26,9 @@ public class Score {
         g.clearRect(1060, 180, 90, 38);                       //  ERASE PREVIOUS NUMBER HERE
         g.drawString(String.valueOf(value), 1080, 210);
 
-        DrawRestart(g);
-        DrawHelp(g);
-        DrawLives(g);
+        drawRestart(g);
+        drawHelp(g);
+        drawLives(g);
 
     }
 
@@ -35,7 +36,7 @@ public class Score {
         value++;
     }
 
-    private void DrawLives(Graphics2D g) {
+    private void drawLives(Graphics2D g) {
         g.drawString("LIVES", left_edge - 15, bottom_edge - 90);
         g.clearRect(left_edge - 40, bottom_edge - 85, 190, 45);
 
@@ -56,7 +57,7 @@ public class Score {
 
     }
 
-    private void DrawRestart(Graphics2D g) {
+    private void drawRestart(Graphics2D g) {
         g.setColor(Color.BLACK);
         g.drawString("RESTART", left_edge, bottom_edge);
         g.drawRect(left_edge - 20, bottom_edge - 40, 212, 50);
@@ -98,7 +99,7 @@ public class Score {
         }
     }
 
-    private void DrawHelp(Graphics2D g) {
+    private void drawHelp(Graphics2D g) {
         g.setFont(font_explain);
         g.setColor(Color.RED);
         g.fillRect(left_edge - 30, bottom_edge - 300, rectsize, rectsize);
@@ -129,7 +130,6 @@ public class Score {
     }
 
     public boolean NextLevelCondition(int level) {
-
         switch (level) {
             case 1:
                 return (getValue() > 25);
