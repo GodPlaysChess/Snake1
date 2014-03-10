@@ -2,53 +2,48 @@ package snake1.objects;
 
 import snake1.data.Map;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
-public class Snake extends RandomlyLocatedObject {
+public class Snake extends GameObject {
     private int direction = KeyEvent.VK_0;
-    private int last_direction;
-    private int traceX;
-    private int traceY;
+    private int lastDirection;
 
-    private boolean is_destroyed = false;
-    private boolean stopped = false;
+    private boolean isDestroyed = false;
+    private boolean isStopped = false;
 
+    //private ArrayList<SnakePart> tail = new ArrayList<>();
+    private Queue<SnakePart> tail = new PriorityQueue<>();
 
-    private ArrayList<Integer> snakeposX = new ArrayList<Integer>();
-    private ArrayList<Integer> snakeposY = new ArrayList<Integer>();
-
-    public Snake(int maxX, int maxY, Map m) {                                              //Creating head and writing the snake position into an array
-        super(maxX, maxY, m);
-        snakeposX.add(getX());
-        snakeposY.add(getY());
-    }
-
-    private void setStateCollision() {
-        is_destroyed = true;
+    public Snake(Color color) {
+        super();
+        this.color = color;
     }
 
     public void stop() {
-        stopped = true;
+        isStopped = true;
     }
 
     public void move() {
-        if (!stopped) {
-            if (direction - last_direction != 2 && direction - last_direction != -2) {           //Prevents the snake to make pi-turns
-                _move(direction);
-            } else _move(last_direction);
+        if (!isStopped) {
+            if (direction - lastDirection != 2 && direction - lastDirection != -2) {           //Prevents the snake to make pi-turns
+                moveTo(direction);
+            } else moveTo(lastDirection);
         }
     }
 
-    public void move2() {
-        if (!stopped) {
-            if (direction - last_direction != 4 && direction - last_direction != -4 && direction - last_direction != 3 && direction - last_direction != -3) {           //Prevents the snake to make pi-turns
-                _move(direction);
-            } else _move(last_direction);
+    public void moveSecondPlayer() {
+        if (!isStopped) {
+            if (direction - lastDirection != 4 && direction - lastDirection != -4
+                    && direction - lastDirection != 3 && direction - lastDirection != -3) {           //Prevents the snake to make pi-turns
+                moveTo(direction);
+            } else moveTo(lastDirection);
         }
     }
 
-    private void _move(int direction) {
+    private void moveTo(int direction) {
 
         switch (direction) {                                           //Moving the head
             case KeyEvent.VK_UP:
@@ -67,80 +62,53 @@ public class Snake extends RandomlyLocatedObject {
             case KeyEvent.VK_D:
                 incX();
                 break;
+            default:
+                //
         }
-        last_direction = direction;
+        lastDirection = direction;
 
         if (direction != KeyEvent.VK_0) {                                                              //Shifting the whole snake
-            update_pos();
+            updateTailPosition();
         }
-
 
     }
 
-    public void tracksnake(Map m) {
-
-        map.setPoint(getX(), getY(), m.SNAKE_HEAD);
-
-        for (int i = 1; i < snakeposX.size(); i++) {                           //was 0 without head
-            m.setPoint(snakeposX.get(i), snakeposY.get(i), Map.SNAKE);
+    private void updateTailPosition() {
+        if (tail.size() > 0) {
+            tail.add(tail.peek().set(x, y));
         }
-        m.setPoint(traceX, traceY, 0);
-
+        move();
     }
 
-    public void tracksnake2(Map m) {
-
-        map.setPoint(getX(), getY(), m.SNAKE2_HEAD);
-
-        for (int i = 1; i < snakeposX.size(); i++) {                           //was 0 without head
-            m.setPoint(snakeposX.get(i), snakeposY.get(i), Map.SNAKE2);
-        }
-        m.setPoint(traceX, traceY, 0);
-
-    }
-
-    private void update_pos() {
-        traceY = snakeposY.get(snakeposX.size() - 1);                                  //Last position goes to buffer, to set it to 0 inside the map
-        traceX = snakeposX.get(snakeposX.size() - 1);
-        if (snakeposX.size() > 1) {
-            for (int i = snakeposX.size() - 1; i > 0; i--) {
-                snakeposX.set(i, snakeposX.get(i - 1));
-                snakeposY.set(i, snakeposY.get(i - 1));
-            }
-        }
-        snakeposX.set(0, getX());
-        snakeposY.set(0, getY());
-
-    }
-
-    public void maybeEat(Apple a) {
+/*    public void maybeEat(Apple a) {
         if (getX() == a.getX() && getY() == a.getY()) {
             snakeposX.add(traceX);
             snakeposY.add(traceY);
             a.setEaten();
         }
-    }
+    }*/
 
 
     public void destroy() {
-        is_destroyed = true;
+        isDestroyed = true;
     }
 
     public boolean isDestroyed() {
-        return is_destroyed;
+        return isDestroyed;
     }
 
     public void setDirection(int keyCode) {
         direction = keyCode;
     }
 
-    public void checkSelfDesctruction() {
-        if (direction != KeyEvent.VK_0 && DestructionConditions() && stopped == false)
+    private void checkCollision() {
+        if (direction != KeyEvent.VK_0 && destructionConditions() && !isStopped) {
             destroy();
+        }
     }
 
     public void makeTomb(Map m) {
-        m.setPoint(getX(), getY(), Map.WALL);
+        m.setPoint(x, y, Map.WALL);
         if (snakeposX.size() > 1) {
             for (int i = 1; i < snakeposX.size(); i++) {
                 m.setPoint(snakeposX.get(i), snakeposY.get(i), Map.SPACE);
@@ -149,21 +117,31 @@ public class Snake extends RandomlyLocatedObject {
         m.setPoint(traceX, traceY, 0);
     }
 
-    private boolean DestructionConditions() {
-        if (map.getPoint(getX(), getY()) == Map.WALL)
+    private boolean destructionConditions() {
+        if (map.getPoint(getX(), getY()) == Map.WALL) {
             return true;
-        if (map.getPoint(getX(), getY()) == Map.SNAKE)
+        }
+        if (map.getPoint(getX(), getY()) == Map.SNAKE) {
             return true;
-        if (map.getPoint(getX(), getY()) == Map.SNAKE2)
+        }
+        if (map.getPoint(getX(), getY()) == Map.SNAKE2) {
             return true;
-        if (map.getPoint(getX(), getY()) == Map.SNAKE2_HEAD)
+        }
+        if (map.getPoint(getX(), getY()) == Map.SNAKE2_HEAD) {
             return true;
-        if (map.getPoint(getX(), getY()) == Map.SNAKE_HEAD)
+        }
+        if (map.getPoint(getX(), getY()) == Map.SNAKE_HEAD) {
             return true;
+        }
 
-        else return false;
+        return false;
     }
 
 
+    @Override
+    public void event() {
+        move();
+        checkCollision(); // <-wall/apple/snake
+    }
 }
 

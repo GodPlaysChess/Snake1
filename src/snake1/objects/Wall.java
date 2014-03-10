@@ -5,11 +5,9 @@ import java.awt.*;
 public class Wall extends GameObject {
 
 
-    public Wall(int x, int y) {
+    public Wall() {
+        super();
         color = Color.DARK_GRAY;
-        type = GameObjectType.WALL;
-        this.x = x;
-        this.y = y;
     }
 
     @Override

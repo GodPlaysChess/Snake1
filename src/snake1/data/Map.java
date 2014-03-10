@@ -21,10 +21,10 @@ public class Map {
 
     //default empty map with borders
 
-    public Map(int x, int y, int level) {
-        sizeX = x;
-        sizeY = y;
-        map = new GameObject[x][y];
+    public Map(int sizeX, int sizeY, int level) {
+        this.sizeX = sizeX;
+        this.sizeY = sizeY;
+        map = new GameObject[sizeX][sizeY];
         mapName = "Level " + level;
         switch (level) {
             case 1:
@@ -53,28 +53,6 @@ public class Map {
         for (int i = 0; i < sizeX; i++) {
             for (int j = 0; j < sizeY; j++) {
                 map[i][j].draw(g);
-                    /*case 0:
-                        g.setColor(Color.WHITE);
-                        break;
-                    case 1:
-                        g.setColor(Color.DARK_GRAY);
-                        break;
-                    case 2:
-                        g.setColor(Color.GREEN);
-                        break;
-                    case 21:
-                        g.setColor(Color.BLUE);
-                        break;
-                    case 3:
-                        g.setColor(Color.RED);
-                        break;
-                    case SNAKE2_HEAD:
-                        g.setColor(Color.MAGENTA);
-                        break;
-                    case SNAKE2:
-                        g.setColor(Color.ORANGE);*/
-
-
             }
         }
     }
@@ -85,9 +63,10 @@ public class Map {
         g.drawString(mapName, 1020, 80);
     }
 
-    private void createWalls(int n) {
-        for (int i = 0; i < n; i++) {
-            new Wall(sizeX, sizeY);
+    private void createWalls(int amount) {
+        for (int i = 0; i < amount; i++) {
+            GameObject wall = new Wall();
+            map[wall.getX()][wall.getY()] = wall;
         }
 
     }
@@ -251,11 +230,11 @@ public class Map {
     }
 
 
-    public void setPoint(int x, int y, int map_code) {
-        map[x][y] = map_code;
+    public void setPoint(GameObject gameObject) {
+        map[gameObject.getX()][gameObject.getY()] = gameObject;
     }
 
-    public int getPoint(int x, int y) {
+    public GameObject getPoint(int x, int y) {
         return map[x][y];
     }
 

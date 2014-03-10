@@ -4,7 +4,7 @@ import snake1.data.Map;
 
 import java.awt.*;
 
-public class Apple extends RandomlyLocatedObject {
+public class Apple extends GameObject{
     private boolean isDead = false;
     private boolean isEaten = false;
     private int time = 100;

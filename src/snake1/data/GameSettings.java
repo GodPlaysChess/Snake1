@@ -2,11 +2,18 @@ package snake1.data;
 
 public final class GameSettings {
 
-    private static boolean timer_off;
+    private static boolean timerOff;
     private static int speed, inspeed;
     private static int speedlimit;
     private static int wallrate;
+
+    public static GameType getGametype() {
+        return gametype;
+    }
+
     private static GameType gametype;
+
+
     private static int level;
     private static int lives;
 
@@ -18,7 +25,7 @@ public final class GameSettings {
             case CAMPAIGN: {
                 level = 1;
                 lives = 3;
-                timer_off = true;
+                timerOff = true;
                 speed = 40;
                 speedlimit = 80;
                 wallrate = 10;
@@ -28,7 +35,7 @@ public final class GameSettings {
             case SURVIVAL: {
                 level = 0;
                 lives = 0;
-                timer_off = true;
+                timerOff = true;
                 speed = 30;
                 speedlimit = 80;
                 wallrate = 5;
@@ -37,7 +44,7 @@ public final class GameSettings {
             case DUEL: {
                 level = 0;
                 lives = 0;
-                timer_off = false;
+                timerOff = false;
                 speed = 40;
                 speedlimit = 80;
                 wallrate = 5;
@@ -49,5 +56,16 @@ public final class GameSettings {
     }
 
     private GameSettings() {
+    }
+
+    public static int getLevel() {
+        return level;
+    }
+
+    public static void nextLevel(GameType gametype){
+        level++;
+        if (level > 2){
+            timerOff = false;
+        }
     }
 }

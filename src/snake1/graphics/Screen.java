@@ -1,6 +1,5 @@
 package snake1.graphics;
 
-import snake1.data.GameSettings;
 import snake1.data.Map;
 import snake1.general.Main;
 import snake1.objects.Apple;
@@ -39,17 +38,6 @@ public class Screen extends JFrame implements KeyListener, ActionListener, Mouse
         this.setFocusable(true);
         this.addKeyListener(this);
         this.addMouseListener(this);
-        //interaction with user
-
-        game = new GameSettings(gametype);
-        map = new Map(length, width, Main.level);
-        if (Main.level > 2)
-            game.timer_off = false;
-        snake = new Snake(length, width, map);
-        apple = new Apple(length, width, map);
-
-        if (gametype == Main.DUEL)
-            snake2 = new Snake(length, width, map);
     }
 
     public void gameloop() {
@@ -60,14 +48,14 @@ public class Screen extends JFrame implements KeyListener, ActionListener, Mouse
 
             if (snake2 != null) {
                 snake2.tracksnake2(map);
-                snake2.move2();
+                snake2.moveSecondPlayer();
             }
 
-            snake.checkSelfDesctruction();
+            snake.checkCollision();
             snake.maybeEat(apple);
 
             if (snake2 != null) {
-                snake2.checkSelfDesctruction();
+                snake2.checkCollision();
                 snake2.maybeEat(apple);
             }
 
