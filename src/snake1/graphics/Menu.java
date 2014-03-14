@@ -2,6 +2,7 @@ package snake1.graphics;
 
 import snake1.data.GameSettings;
 import snake1.data.GameType;
+import snake1.general.Game;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,14 +10,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Menu extends JFrame {
-    private static final Font font = new Font("Arial", Font.BOLD, 138);
-    public static final Menu MENU = new Menu();
+    private static final Font FONT = new Font("Arial", Font.BOLD, 138);
+    private static final Menu MENU = new Menu();
 
-    public boolean isGameChosen() {
-        return gameChosen;
-    }
-
-    private boolean gameChosen = false;
+    private Game game;
 
     private Menu() {
         initUI();
@@ -34,8 +31,9 @@ public class Menu extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                GameSettings.SETTINGS.setGame(GameType.CAMPAIGN);
-                gameChosen = true;
+                game = Game.create(GameSettings.setGame(GameType.CAMPAIGN));
+                setVisible(false);
+                game.start();
             }
         });
 
@@ -54,8 +52,9 @@ public class Menu extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                GameSettings.SETTINGS.setGame(GameType.DUEL);
-                gameChosen = true;
+                game = Game.create(GameSettings.setGame(GameType.DUEL));
+                setVisible(false);
+                game.start();
             }
         });
 
@@ -65,14 +64,15 @@ public class Menu extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                GameSettings.SETTINGS.setGame(GameType.SURVIVAL);
-                gameChosen = true;
+                game = Game.create(GameSettings.setGame(GameType.SURVIVAL));
+                setVisible(false);
+                game.start();
             }
         });
 
         JLabel label = new JLabel();
         label.setText("HS Snake");
-        label.setFont(font);
+        label.setFont(FONT);
         label.setBounds(150, 50, 900, 550);
         label.setOpaque(true);
         label.setVerticalAlignment(JLabel.TOP);
@@ -95,8 +95,11 @@ public class Menu extends JFrame {
 
         setSize(1224, 708);
         setLocationRelativeTo(null);
-        setVisible(!gameChosen);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    }
+
+    public static void showMenu() {
+        MENU.setVisible(true);
     }
 }
 

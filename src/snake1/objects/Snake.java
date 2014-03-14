@@ -1,6 +1,7 @@
 package snake1.objects;
 
-import snake1.data.Map;
+import snake1.data.Arena;
+import snake1.data.Direction;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -8,140 +9,122 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 
 public class Snake extends GameObject {
-    private int direction = KeyEvent.VK_0;
-    private int lastDirection;
 
+    private Direction direction = Direction.HOLD;
+    private Direction lastDirection = Direction.HOLD;
     private boolean isDestroyed = false;
-    private boolean isStopped = false;
 
-    //private ArrayList<SnakePart> tail = new ArrayList<>();
     private Queue<SnakePart> tail = new PriorityQueue<>();
+    private int traceX = x;
+    private int traceY = y;
 
     public Snake(Color color) {
-        super();
-        this.color = color;
+        super(color);
     }
 
     public void stop() {
-        isStopped = true;
+        direction = Direction.HOLD;
     }
 
-    public void move() {
-        if (!isStopped) {
-            if (direction - lastDirection != 2 && direction - lastDirection != -2) {           //Prevents the snake to make pi-turns
+    private void moveHead() {
+        if (direction != Direction.HOLD) {
+            if (direction == Direction.DOWN && lastDirection == Direction.UP ||
+                    direction == Direction.UP && lastDirection == Direction.DOWN ||
+                    direction == Direction.LEFT && lastDirection == Direction.RIGHT ||
+                    direction == Direction.RIGHT && lastDirection == Direction.LEFT) {
+                moveTo(lastDirection);
+            } else {
                 moveTo(direction);
-            } else moveTo(lastDirection);
+            }
         }
     }
 
-    public void moveSecondPlayer() {
-        if (!isStopped) {
-            if (direction - lastDirection != 4 && direction - lastDirection != -4
-                    && direction - lastDirection != 3 && direction - lastDirection != -3) {           //Prevents the snake to make pi-turns
-                moveTo(direction);
-            } else moveTo(lastDirection);
-        }
-    }
-
-    private void moveTo(int direction) {
-
+    private void moveTo(Direction direction) {
         switch (direction) {                                           //Moving the head
-            case KeyEvent.VK_UP:
-            case KeyEvent.VK_W:
+            case UP:
                 decY();
                 break;
-            case KeyEvent.VK_DOWN:
-            case KeyEvent.VK_S:
+            case DOWN:
                 incY();
                 break;
-            case KeyEvent.VK_LEFT:
-            case KeyEvent.VK_A:
+            case LEFT:
                 decX();
                 break;
-            case KeyEvent.VK_RIGHT:
-            case KeyEvent.VK_D:
+            case RIGHT:
                 incX();
                 break;
             default:
                 //
         }
         lastDirection = direction;
-
-        if (direction != KeyEvent.VK_0) {                                                              //Shifting the whole snake
-            updateTailPosition();
-        }
-
     }
 
-    private void updateTailPosition() {
-        if (tail.size() > 0) {
-            tail.add(tail.peek().set(x, y));
+    public void moveTail() {
+        if (direction != Direction.HOLD && tail.size() > 0) {
+            SnakePart movedPart = tail.poll();
+            movedPart.set(traceX, traceY);
+            tail.add(movedPart);
         }
-        move();
     }
 
-/*    public void maybeEat(Apple a) {
-        if (getX() == a.getX() && getY() == a.getY()) {
-            snakeposX.add(traceX);
-            snakeposY.add(traceY);
-            a.setEaten();
-        }
-    }*/
+    public void eat() {
+        //add a new tail part in the end of the queue. Tail itself does not moveHead. Head moves.
+        tail.add(new SnakePart(traceX, traceY, findColor()));
+    }
 
 
     public void destroy() {
         isDestroyed = true;
     }
 
-    public boolean isDestroyed() {
-        return isDestroyed;
-    }
-
     public void setDirection(int keyCode) {
-        direction = keyCode;
-    }
-
-    private void checkCollision() {
-        if (direction != KeyEvent.VK_0 && destructionConditions() && !isStopped) {
-            destroy();
+        switch (keyCode) {
+            case KeyEvent.VK_UP:
+            case KeyEvent.VK_W:
+                direction = Direction.UP;
+                break;
+            case KeyEvent.VK_DOWN:
+            case KeyEvent.VK_S:
+                direction = Direction.DOWN;
+                break;
+            case KeyEvent.VK_LEFT:
+            case KeyEvent.VK_A:
+                direction = Direction.LEFT;
+                break;
+            case KeyEvent.VK_RIGHT:
+            case KeyEvent.VK_D:
+                direction = Direction.RIGHT;
+                break;
+            default:
         }
     }
 
-    public void makeTomb(Map m) {
-        m.setPoint(x, y, Map.WALL);
-        if (snakeposX.size() > 1) {
-            for (int i = 1; i < snakeposX.size(); i++) {
-                m.setPoint(snakeposX.get(i), snakeposY.get(i), Map.SPACE);
-            }
+    public void makeTomb(Arena arena) {
+        arena.setPoint(x, y, Wall.INSTANCE);
+        for (SnakePart sp : tail) {
+            arena.setPoint(sp.getX(), sp.getY(), Wall.INSTANCE);
         }
-        m.setPoint(traceX, traceY, 0);
     }
-
-    private boolean destructionConditions() {
-        if (map.getPoint(getX(), getY()) == Map.WALL) {
-            return true;
-        }
-        if (map.getPoint(getX(), getY()) == Map.SNAKE) {
-            return true;
-        }
-        if (map.getPoint(getX(), getY()) == Map.SNAKE2) {
-            return true;
-        }
-        if (map.getPoint(getX(), getY()) == Map.SNAKE2_HEAD) {
-            return true;
-        }
-        if (map.getPoint(getX(), getY()) == Map.SNAKE_HEAD) {
-            return true;
-        }
-
-        return false;
-    }
-
 
     @Override
-    public void event() {
-        move();
-        checkCollision(); // <-wall/apple/snake
+    public void event(Arena arena) {
+        moveHead();
+        arena.getPoint(x, y).collide(this);
+        traceX = x;
+        traceY = y;
+        if (isDestroyed) {
+            makeTomb(arena);
+        }
+    }
+
+    @Override
+    public void collide(Snake snake) {
+        snake.destroy();
+        snake.stop();
+    }
+
+    public boolean isDestroyed() {
+        return isDestroyed;
     }
 }
 

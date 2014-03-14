@@ -1,6 +1,6 @@
 package snake1.objects;
 
-import snake1.data.Map;
+import snake1.data.Arena;
 
 import java.awt.*;
 
@@ -18,9 +18,8 @@ public class Apple extends GameObject{
         return isDead;
     }
 
-    public Apple(int maxX, int maxY) {
-        super(maxX, maxY, Color.RED);
-        type = GameObjectType.APPLE;
+    public Apple() {
+        super(Color.RED);
     }
 
     protected void setEaten() {
@@ -37,8 +36,8 @@ public class Apple extends GameObject{
 
 
     public void draw(Graphics g) {
-        g.setColor(color);
-        g.fillRect(Map.ALIGN_X + x * 15, Map.ALIGN_Y + y * 15, 15, 15);
+
+        g.fillRect(Arena.ALIGN_X + x * 15, Arena.ALIGN_Y + y * 15, 15, 15);
 
         g.setColor(Color.RED);
         g.setFont(serif);
@@ -47,10 +46,16 @@ public class Apple extends GameObject{
     }
 
     @Override
-    public void event() {
+    public void event(Arena arena) {
         decTime();
         if (time == 0) {
             setDead();
         }
+    }
+
+    @Override
+    public void collide(Snake snake) {
+        snake.eat();
+        isEaten = true;
     }
 }

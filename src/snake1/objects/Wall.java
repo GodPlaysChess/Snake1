@@ -1,18 +1,25 @@
 package snake1.objects;
 
+import snake1.data.Arena;
+
 import java.awt.*;
 
 public class Wall extends GameObject {
 
+    public static Wall INSTANCE = new Wall();
 
-    public Wall() {
-        super();
-        color = Color.DARK_GRAY;
+    private Wall() {
+        super(Color.DARK_GRAY);
     }
 
     @Override
-    public void event() {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void event(Arena arena) {
     }
+
+    @Override
+    public void collide(Snake snake) {
+        snake.destroy();
+    }
+
 }
 

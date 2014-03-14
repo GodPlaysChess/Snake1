@@ -2,70 +2,85 @@ package snake1.data;
 
 public final class GameSettings {
 
-    private static boolean timerOff;
-    private static int speed, inspeed;
-    private static int speedlimit;
-    private static int wallrate;
+    private boolean timerOff = false;
+    private int speed, inspeed;
+    private int speedlimit;
 
-    public static GameType getGametype() {
-        return gametype;
-    }
+    private int firstLevel; // -> moveHead to gameData
+    private int lives;
+    private GameType gametype;
+    private int wallrate;
 
-    private static GameType gametype;
-
-
-    private static int level;
-    private static int lives;
-
-    public static final GameSettings SETTINGS = new GameSettings();
-
-    public void setGame(GameType gameType) {
-        gametype = gameType;
-        switch (gameType) {
-            case CAMPAIGN: {
-                level = 1;
-                lives = 3;
-                timerOff = true;
-                speed = 40;
-                speedlimit = 80;
-                wallrate = 10;
-
-            }
-            break;
-            case SURVIVAL: {
-                level = 0;
-                lives = 0;
-                timerOff = true;
-                speed = 30;
-                speedlimit = 80;
-                wallrate = 5;
-            }
-            break;
-            case DUEL: {
-                level = 0;
-                lives = 0;
-                timerOff = false;
-                speed = 40;
-                speedlimit = 80;
-                wallrate = 5;
-            }
-            break;
-
-        }
-        inspeed = speed;
+    public int getWallrate() {
+        return wallrate;
     }
 
     private GameSettings() {
     }
 
-    public static int getLevel() {
-        return level;
+    public GameType getGametype() {
+        return gametype;
     }
 
-    public static void nextLevel(GameType gametype){
-        level++;
-        if (level > 2){
+    public int getSpeed() {
+        return speed;
+    }
+
+    public static GameSettings setGame(GameType gameType) {
+        GameSettings settings = new GameSettings();
+        settings.gametype = gameType;
+        switch (gameType) {
+            case CAMPAIGN: {
+                settings.firstLevel = 1;
+                settings.lives = 3;
+                settings.timerOff = true;
+                settings.speed = 40;
+                settings.speedlimit = 80;
+                settings.wallrate = 10;
+
+            }
+            break;
+            case SURVIVAL: {
+                settings.firstLevel = 0;
+                settings.lives = 0;
+                settings.timerOff = true;
+                settings.speed = 30;
+                settings.speedlimit = 80;
+                settings.wallrate = 5;
+            }
+            break;
+            case DUEL: {
+                settings.firstLevel = 0;
+                settings.lives = 0;
+                settings.timerOff = false;
+                settings.speed = 40;
+                settings.speedlimit = 80;
+                settings.wallrate = 5;
+            }
+            break;
+
+        }
+        return settings;
+    }
+
+    public int getFirstLevel() {
+        return firstLevel;
+    }
+
+    public void incSpeed() {
+        if (speed < speedlimit) {
+            speed++;
+        }
+    }
+
+    public void nextLevel() {
+        firstLevel++;
+        if (firstLevel > 2) {
             timerOff = false;
         }
+    }
+
+    public int getLives() {
+        return lives;
     }
 }
